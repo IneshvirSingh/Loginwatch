@@ -1,0 +1,109 @@
+{
+  "_comment": [
+    "Detector thresholds. Every number here is a tuning decision, not a law of",
+    "nature. DETECTIONS.md explains why each value was chosen and what happens",
+    "when you move it. Thresholds were tuned against the synthetic dataset",
+    "produced by `loginwatch generate --seed 1337`; see `loginwatch evaluate`."
+  ],
+
+  "generator": {
+    "seed": 1337,
+    "users": 40,
+    "days": 21,
+    "attack_free_days": 14,
+    "start_date": "2026-08-24T00:00:00Z"
+  },
+
+  "profiling": {
+    "_comment": "Baselines are built ONLY from the attack-free training window.",
+    "min_events_for_profile": 25,
+    "train_days": 14
+  },
+
+  "correlation": {
+    "_comment": [
+      "Alerts are grouped into an incident when they share an entity (account",
+      "or source IP) and are close in time. window_minutes is the maximum gap",
+      "between two alerts for them to be linked."
+    ],
+    "window_minutes": 120,
+    "link_on_username": true,
+    "link_on_src_ip": true
+  },
+
+  "detectors": {
+    "brute_force": {
+      "enabled": true,
+      "severity": "high",
+      "window_seconds": 300,
+      "min_failures": 8,
+      "_comment": "8 failures from ONE IP against ONE account inside 5 minutes."
+    },
+
+    "password_spray": {
+      "enabled": true,
+      "severity": "high",
+      "window_seconds": 1800,
+      "min_distinct_users": 10,
+      "max_failures_per_user": 4,
+      "_comment": "One source, many accounts, few tries each: low-and-slow."
+    },
+
+    "credential_stuffing": {
+      "enabled": true,
+      "severity": "medium",
+      "window_seconds": 1800,
+      "min_distinct_ips": 6,
+      "min_total_failures": 8,
+      "_comment": "Many sources converging on ONE account: distributed guessing."
+    },
+
+    "impossible_travel": {
+      "enabled": true,
+      "severity": "high",
+      "max_speed_kmh": 900,
+      "min_distance_km": 500,
+      "_comment": [
+        "900 km/h is roughly commercial cruising speed. min_distance_km avoids",
+        "firing on GeoIP jitter between nearby cities."
+      ]
+    },
+
+    "anomalous_hour": {
+      "enabled": true,
+      "severity": "medium",
+      "neighbour_hours": 2,
+      "min_baseline_events": 25,
+      "min_quiet_hours": 4,
+      "_comment": [
+        "Fires when a successful login lands inside the account's longest",
+        "dormant stretch (its 'night'), shrunk by neighbour_hours at each end.",
+        "Accounts whose dormant stretch is shorter than min_quiet_hours are",
+        "skipped: they have no meaningful off-hours to be outside of."
+      ]
+    },
+
+    "new_device_location": {
+      "enabled": true,
+      "severity": "medium",
+      "device_severity": "low",
+      "country_severity": "medium",
+      "min_baseline_events": 25,
+      "_comment": "First-ever device fingerprint or country for an established user."
+    },
+
+    "post_failure_success": {
+      "enabled": true,
+      "severity": "critical",
+      "failure_window_seconds": 600,
+      "min_failures": 5,
+      "success_within_seconds": 300,
+      "require_same_ip": false,
+      "_comment": [
+        "Burst of failures immediately followed by a success: the classic",
+        "shape of a successful account takeover. Critical because, unlike a",
+        "bare brute force, the attacker may already be inside."
+      ]
+    }
+  }
+}
