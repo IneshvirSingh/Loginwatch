@@ -1,0 +1,2 @@
+# Test dependencies only. The project itself needs nothing at runtime.
+pytest>=8.0

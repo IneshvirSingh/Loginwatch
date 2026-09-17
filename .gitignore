@@ -1,0 +1,11 @@
+# Generated artifacts. Everything here is reproducible with:
+#   python -m loginwatch run-all
+data/
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+
+# Example reports ARE committed (they are portfolio artifacts), but the
+# dashboard is regenerated on every run.
+reports/dashboard.html

@@ -1,0 +1,17 @@
+[project]
+name = "loginwatch"
+version = "1.0.0"
+description = "Authentication log monitoring and login anomaly detection on synthetic data"
+requires-python = ">=3.10"
+dependencies = []  # standard library only - see requirements.txt
+
+[project.optional-dependencies]
+dev = ["pytest>=8.0"]
+ai = ["anthropic>=0.40"]  # optional AI triage backend only
+
+[project.scripts]
+loginwatch = "loginwatch.cli:main"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-ra"

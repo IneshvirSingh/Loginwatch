@@ -1,0 +1,14 @@
+# The core project has NO runtime dependencies.
+#
+# Everything - log parsing, SQLite storage, the detectors, the correlation
+# engine, the markdown reports and the HTML dashboard with its inline SVG
+# charts - is built on the Python standard library. That is a deliberate
+# constraint: the project must run offline on a clean machine with nothing but
+# Python 3.10 or newer installed.
+#
+# Optional, and never required:
+#   anthropic>=0.40   only for `loginwatch ai-triage --backend anthropic`.
+#                     The default triage backend is offline and needs no key.
+#                     See ai_triage.py.
+#
+# For running the tests, see requirements-dev.txt.
